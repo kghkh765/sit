@@ -103,7 +103,10 @@ int dofork(char *name, int convert);
 void cp2(unsigned int x, char *dest);
 void cp4(unsigned long x, char *dest);
 
-int main(argc,argv) char **argv; {
+int main(argc,argv)
+	int argc;
+	char **argv;
+{
 	int i,n;
 	int total=0, items=0;
 	int c;
