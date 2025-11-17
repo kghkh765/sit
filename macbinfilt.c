@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 int cur_part,part,divert_part;
 int max_part;
@@ -34,7 +35,15 @@ FILE *parts[100];
 #endif
 char *expr;
 
-main(argc,argv) char **argv[]; {
+/* function declarations */
+void filter(FILE *fs);
+void checkparts(char *str);
+void dopart(void);
+void oseq(void);
+void end_oseq(void);
+void putpart(int n);
+
+int main(int argc, char **argv) {
 	FILE *fs;
 	int i,rc=0;
 
@@ -76,7 +85,7 @@ char bmap[]={0x00,0x24,0x00,0x00,0xfe,0x3f,0x7f,0x07,
  * either greater than 60 characters or ends in a ':'
  */
 
-filter(fs) FILE *fs; {
+void filter(FILE *fs) {
 	register char *p,*inp;
 
 reget:
@@ -93,7 +102,7 @@ reget:
 		end_oseq();
 }
 
-checkparts(str) char *str; {
+void checkparts(char *str) {
 	char *p;
 	char num0[40], num1[40];
 
@@ -114,7 +123,7 @@ fprintf(stderr,"part %d of %d\n",part,max_part);
 #endif
 }
 
-dopart() {
+void dopart(void) {
 	if (divert_part) {	/* diversion in progress */
 		if (part == divert_part)	/* another mention of current part */
 			return;
@@ -129,7 +138,7 @@ dopart() {
 }
 
 /* part out of sequence */
-oseq() {
+void oseq(void) {
 	int i;
 
 	/* try and fill in gap */
@@ -150,12 +159,13 @@ isgap:
 		perror((const char*)pname); exit(-1); }
 	parts[part] = ofs;
 }
-end_oseq() {
+
+void end_oseq(void) {
 	divert_part = 0;
 	ofs = saveofs;
 }
 
-putpart(n) {
+void putpart(int n) {
 	FILE *fs;
 	register int c;
 

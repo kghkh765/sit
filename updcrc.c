@@ -2,7 +2,7 @@
  *
  * Calculate, intelligently, the CRC of a dataset incrementally given a 
  * buffer full at a time.
- * 
+ *
  * Usage:
  * 	newcrc = updcrc( oldcrc, bufadr, buflen )
  * 		unsigned int oldcrc, buflen;
@@ -82,10 +82,7 @@ static WTYPE crctab[1<<B] = /* as calculated by initcrctab() */ {
 } ;
 
 WTYPE
-updcrc( icrc, icp, icnt )
-    WTYPE icrc;
-    unsigned char *icp;
-    int icnt;
+updcrc( WTYPE icrc, unsigned char *icp, int icnt )
 {
     register WTYPE crc = icrc;
     register unsigned char *cp = icp;
@@ -95,7 +92,7 @@ updcrc( icrc, icp, icnt )
 #ifndef SWAPPED
 	crc = (crc<<B) ^ crctab[(crc>>(W-B)) ^ *cp++];
 #else
-	crc = (crc>>B) ^ crctab[(crc & ((1<<B)-1)) ^ *cp++]; 
+	crc = (crc>>B) ^ crctab[(crc & ((1<<B)-1)) ^ *cp++];
 #endif /* SWAPPED */
     }
 
@@ -115,7 +112,7 @@ initcrctab()
     register  int b, i;
     WTYPE v;
 
-    
+
     for( b = 0; b <= (1<<B)-1; ++b ) {
 #ifndef SWAPPED
 	for( v = b<<(W-B), i = B; --i >= 0; )
@@ -123,7 +120,7 @@ initcrctab()
 #else
 	for( v = b, i = B; --i >= 0; )
 	    v = v & 1 ? (v>>1)^P : v>>1;
-#endif	    
+#endif
 	crctab[b] = v;
 
 	printf( "0x%lx,", v & ((1L<<W)-1L));
@@ -144,8 +141,7 @@ initcrctab()
 
 
 
-main( ac, av )
-    int ac; char **av;
+main( int ac, char **av )
 {
     int fd;
     int nr;

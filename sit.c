@@ -4,11 +4,11 @@
    Creates a StuffIt 1.5.1-compatible archive from files or folders specified
    as arguments. The default output file is "archive.sit" if the -o option is
    not provided. Use -v, -vv, or -vvv to see increasingly verbose output.
-   
+
    Files without a resource fork are assigned the default type TEXT and
    creator KAHL, identifying them as a text file created by THINK C.
    You can override the default type and creator with the -T and -C options.
-   
+
    The -u option converts all linefeeds ('\n') to carriage returns ('\r').
    This is really only useful when archiving plain Unix text files which you
    intend to open in a classic Mac application like SimpleText or MacWrite.
@@ -19,7 +19,7 @@
    It just provides a way to create a container that can be safely transferred
    from a modern system to a classic Mac computer or emulator, where it can
    be opened with StuffIt or StuffIt Expander.
-   
+
    Examples:
      # create "archive.sit" containing three specified files
      sit file1 file2 file3
@@ -89,7 +89,24 @@ int	unixf;
 int verbose;
 char *Creator, *Type;
 
-void usage(arg0) char *arg0; { fprintf(stderr,"Usage: %s [-v] [-o dstfile] file ...\n", arg0); }
+static void usage(char *arg0) {
+    fprintf(stderr, "Usage: %s ", arg0);
+    fprintf(stderr, "[-v] [-u] [-T type] [-C creator] [-o dstfile] file ...\n");
+    fprintf(stderr, "Options:\n");
+    fprintf(stderr, "  -v           Verbose output (can specify more than once for extra info)\n");
+    fprintf(stderr, "  -u           Convert '\\n' chars to '\\r' in file's data while archiving\n");
+    fprintf(stderr, "  -T type      Use this four-character type code if file doesn't have one\n");
+    fprintf(stderr, "  -C creator   Use this four-character creator if file doesn't have one\n");
+    fprintf(stderr, "  -o dstfile   Create archive with this name (default is \"archive.sit\")\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "Examples:\n");
+    fprintf(stderr, "  # create \"archive.sit\" containing three specified files\n");
+    fprintf(stderr, "  %s file1 file2 file3\n", arg0);
+    fprintf(stderr, "  # create \"FolderArchive.sit\" containing FolderToBeArchived\n");
+    fprintf(stderr, "  %s -o FolderArchive.sit FolderToBeArchived\n", arg0);
+    fprintf(stderr, "  # specify that untyped files are JPEG and open in GraphicConverter\n");
+    fprintf(stderr, "  %s -o jpgArchive.sit -T JPEG -C GKON *.jpg\n", arg0);
+}
 extern char *optarg;
 extern int optind;
 
@@ -103,14 +120,12 @@ int dofork(char *name, int convert);
 void cp2(unsigned int x, char *dest);
 void cp4(unsigned long x, char *dest);
 
-int main(argc,argv)
-	int argc;
-	char **argv;
+int main(int argc, char** argv)
 {
 	int i,n;
 	int total=0, items=0;
 	int c;
-	
+
 	if (argc < 2) {
 		usage(argv[0]);
 		exit(1);
@@ -143,7 +158,7 @@ int main(argc,argv)
 			usage(argv[0]);
 			exit(1);
 	}
-	
+
 	if (verbose) {
 		fprintf(stdout, "Creating archive file \"%s\"\n", defoutfile);
 	}
@@ -178,8 +193,7 @@ int main(argc,argv)
 	}
 }
 
-int put_item(name)
-	char name[];
+int put_item(char *name)
 {
 	int n = 0;
 	struct stat st;
@@ -198,9 +212,7 @@ int put_item(name)
 	return n;
 }
 
-int put_folder(name,level)
-	char name[];
-	int level;
+int put_folder(char *name, int level)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -235,11 +247,7 @@ int put_folder(name,level)
 	return n;
 }
 
-int put_folder_entry(name,startPos,mtype,level)
-	char name[];
-	long startPos;
-	int mtype;
-	int level;
+int put_folder_entry(char *name, long startPos, int mtype, int level)
 {
 	/* This function adds the special startFolder and endFolder entries that
 	   StuffIt uses to bracket the contents of a directory.
@@ -255,10 +263,10 @@ int put_folder_entry(name,startPos,mtype,level)
 	   startFolder and the beginning of the endFolder, because we already have
 	   those offsets and their difference is the same number of bytes due to the
 	   folder entries being the same length.
-	   
+
 	   That total is then written to the startFolder entry's cDLen and dlen fields,
 	   which will both be the the same value if we aren't compressing anything.
-	 */ 
+	 */
 	struct stat st;
 	int i;
 	long fpos1, fpos2;
@@ -267,7 +275,7 @@ int put_folder_entry(name,startPos,mtype,level)
 	struct tm *tp;
 	time_t ctime, mtime;
 	long bs;
-	
+
 	fpos1 = lseek(ofd,0,1); /* remember where we are (beginning of header) */
 	/* write empty header, will seek back and fill in later */
 	bzero(&fh,sizeof(fh));
@@ -294,9 +302,9 @@ int put_folder_entry(name,startPos,mtype,level)
 	tdiff = TIMEDIFF + tp->tm_gmtoff;
 	if (tp->tm_isdst)
 		tdiff += 60 * 60;
-	cp4(ctime + tdiff, fh.cDate);
-	cp4(mtime + tdiff, fh.mDate);
-	
+	cp4(ctime + tdiff,(char*)fh.cDate);
+	cp4(mtime + tdiff,(char*)fh.mDate);
+
 	fh.compRMethod = fh.compDMethod = mtype;
 	cp4(fpos1-startPos,(char*)fh.dLen);
 	cp4(fpos1-startPos,(char*)fh.cDLen);
@@ -319,9 +327,7 @@ int put_folder_entry(name,startPos,mtype,level)
 	return (fpos2 - fpos1);
 }
 
-int put_file(name,level)
-	char name[];
-	int level;
+int put_file(char *name, int level)
 {
 	struct stat st;
 	struct infoHdr ih;
@@ -396,7 +402,7 @@ int put_file(name,level)
 		strncpy((char*)fh.FndrFlags, ih.flag, 2);
 		strncpy((char*)fh.cDate, ih.ctime, 4);
 		strncpy((char*)fh.mDate, ih.mtime, 4);
-	}	
+	}
 	else {	/* no info file, so try to use info from rsrc, else fake it */
 		char *fName = basename(name);
 		if (!fName) fName = name;
@@ -428,7 +434,7 @@ int put_file(name,level)
 	strcpy(nbuf,name);
 	strcat(nbuf,".info");
 	if (rmfiles) unlink(nbuf);	/* ignore errors */
-	
+
 	if (verbose) {
 		strncpy(nbuf,fh.fType, 4);
 		strncpy(nbuf+4,"/",1);
@@ -447,10 +453,8 @@ int put_file(name,level)
 
 	return (fpos2 - fpos1);
 }
-	
-int dofork(name,convert)
-	char name[];
-	int convert;
+
+int dofork(char *name, int convert)
 {
 	int fd, ufd, tfd;
 	size_t n;
@@ -503,17 +507,13 @@ int dofork(name,convert)
 	return 0;
 }
 
-void cp2(x,dest)
-	unsigned int x;
-	char dest[];
+void cp2(unsigned int x, char *dest)
 {
 	dest[0] = x>>8;
 	dest[1] = x;
 }
 
-void cp4(x,dest)
-	unsigned long x;
-	char dest[];
+void cp4(unsigned long x, char *dest)
 {
 	dest[0] = x>>24;
 	dest[1] = x>>16;

@@ -48,24 +48,24 @@ typedef struct __attribute__((aligned(2), packed)) fileHdr {	/* 112 bytes */
 
 /* A new feature with v1.5 and later is support for HMFs.  They look like regular entries for compatibility…
 
-	Hiearchy Maintained Folder entry format:
-	
+	Hierarchy Maintained Folder entry format:
+
 		startFolder header (folder1)
 		.
 		.	file1 in folder1
-		.	
+		.
 		.	startFolder header for subfolder (sub1)
 		.	.	files/folders in sub1 (folders will be bracketed by
 		.	.				startFolder and endFolder)
 		.	endFolder header (sub1)
-		.	
+		.
 		.	Other files and/or folders in folder1
 		.	.
 		.	.
 		.	.
 		.	fileN/subN
 		endFolder header (folder1)
-		
+
 		startFolder format:
 			data compression method will be startFolder (32)
 			rsrc compression method will be startFolder (32)
@@ -81,11 +81,11 @@ typedef struct __attribute__((aligned(2), packed)) fileHdr {	/* 112 bytes */
 			otherwise
 				fName contains folder name
 				All other fields invalid
-		
+
 		endFolder format:
 			Data compression method will be endFolder (33)
 			Other fields may be invalid
-		
+
 
 		To maintain compatibility, the header structure used is the same as
 			fileHdr.  This may prove to be quite wasteful, but that’s life!
