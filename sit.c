@@ -652,15 +652,21 @@ off_t dofork(char *name, int convert) {
 	int fd, ufd;
 	size_t n, clen;
 	char *p;
-	char *cvtfilename = "/tmp/sit+cvt";
-	char *cmpfilename = "/tmp/sit+cmp";
+	char cvtfilename[] = "/tmp/sit+cvt-XXXXXX";
+	char cmpfilename[] = "/tmp/sit+cmp-XXXXXX";
+
+	if ((fd=mkstemp(cmpfilename))<0) {
+		perror(cmpfilename);
+		return 0;
+	}
+	close(fd);
 
 	if ((fd=open(name,O_RDONLY))<0) {
 		perror(name);
 		return 0;
 	}
 	if (convert) {	/* build conversion file */
-		if ((ufd=creat(cvtfilename,0644))<0) {
+		if ((ufd=mkstemp(cvtfilename))<0) {
 			perror(cvtfilename);
 			close(fd);
 			return 0;
@@ -728,6 +734,7 @@ off_t dofork(char *name, int convert) {
 	/* skip past initial 3-byte compress header (1f 9d 8e) */
 	if (lseek(fd,3L,SEEK_SET) < 0) {
 		fprintf(stderr, "Error seeking in compressed data: %s\n", strerror(errno));
+		close(fd);
 		return 0;
 	}
 #endif
