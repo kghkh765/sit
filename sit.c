@@ -15,11 +15,6 @@
    In general, you should avoid this option, especially if you are archiving
    other types of documents or applications.
 
-   Unlike the original StuffIt, this one does not currently compress data.
-   It just provides a way to create a container that can be safely transferred
-   from a modern system to a classic Mac computer or emulator, where it can
-   be opened with StuffIt or StuffIt Expander.
-
    Examples:
      # create "archive.sit" containing three specified files
      sit file1 file2 file3
